@@ -1,5 +1,5 @@
 import axios, { type AxiosResponse } from 'axios'
-import type { User, AuthResponse } from '../types'
+import type { User, AuthResponse, UpdateProfileRequest } from '../types'
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -32,7 +32,21 @@ api.interceptors.response.use(
 export const authAPI = {
   login: (username: string, password: string): Promise<AxiosResponse<AuthResponse>> => 
     api.post('/user/login', { username, password }),
-  
+
+  updateProfile: async (token: string, userId: string, data: UpdateProfileRequest): Promise<AxiosResponse<User>> => {
+    const formData = new FormData();
+    formData.append('name', data.name);
+    if (data.profileImage) {
+      data.profileImage.forEach(file => {
+        formData.append('image', file);
+      });
+    }
+    const response = await api.put(`/user/${userId}`, formData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
   validateToken: (token: string): Promise<User> =>
     api.get('/user/current', {
       headers: { Authorization: `Bearer ${token}` }

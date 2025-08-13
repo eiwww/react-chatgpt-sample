@@ -1,4 +1,5 @@
 export interface User {
+  image: string | File | undefined
   id: string
   username: string
   name: string
@@ -46,4 +47,9 @@ export interface AuthContextType {
 export interface SocketContextType {
   socket: WebSocket | null
   isConnected: boolean
+}
+
+export interface UpdateProfileRequest {
+  name: string
+  profileImage?: File[]
 }
